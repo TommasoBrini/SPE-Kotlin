@@ -1,4 +1,4 @@
-package classes
+package `02_classes`
 
 data class Person(var name: String, var age: Int)
 

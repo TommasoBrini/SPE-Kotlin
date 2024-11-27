@@ -1,4 +1,4 @@
-package introdution
+package `01_introdution`
 import java.lang.IllegalArgumentException
 
 fun failWithWrongAge(age: Int?): Nothing {

@@ -1,4 +1,4 @@
-package introdution
+package `01_introdution`
 
 fun containsEven(collection: Collection<Int>): Boolean =
     collection.any { x -> (x % 2 == 0) }
