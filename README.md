@@ -1,3 +1,6 @@
-# SPE-Kotlin
+# SPE-Software Process Engineering
 
-repo of exercises to improve kotlin skills
+repo for SPE source code
+
+1 - Kotlin
+2 - DSLs
