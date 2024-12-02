@@ -7,7 +7,7 @@ out/
 .kotlin
 
 ### Gradle ###
-**/.gradle/
+!**/.gradle/
 
 ### Idea ###
 .idea/
