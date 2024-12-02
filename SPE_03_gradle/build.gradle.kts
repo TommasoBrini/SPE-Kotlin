@@ -51,29 +51,21 @@ fun findSources(): Array<String> = projectDir // From the project
 
 // Gradle way to create a configuration
 val compileClasspath by configurations.creating
-dependencies {
-    forEachLibrary {
-        compileClasspath(files(it))
-    }
-    runtimeClasspath(files("build/bin"))
-}
 
 val compileJava = tasks.register<Exec>("compileJava") {
     val classpathFiles = compileClasspath.resolve()
     val sources = findSources()
-    if(sources != null) {
+    if(sources.isNotEmpty()) {
         val javacExecutable = Jvm.current().javacExecutable.absolutePath
-        val separator = ";"
+        val separator = if (System.getProperty("os.name").startsWith("Windows")) ";" else ":"
         commandLine(
             "$javacExecutable", "-cp", classpathFiles.joinToString(separator),
-            "-d", "bin", *sources
+            "-d", "$buildDir/bin", *sources
         )
     }
 }
-fun DependencyHandlerScope.forEachLibrary(todo: (String) -> Unit) {
-    findLibraries().forEach{
-        todo(it)
-    }
+fun DependencyHandlerScope.forEachLibrary(todo: DependencyHandlerScope.(String) -> Unit) {
+    findLibraries().forEach{ todo(it) }
 }
 fun findSources() = findFilesIn("src").withExtension("java")
 fun findLibraries() = findFilesIn("lib").withExtension("jar")
@@ -91,15 +83,23 @@ data class FinderInFolder(val folder: String) {
         ?: emptyArray()
 }
 
-val runtimeClasspath by configurations.creating{
+val runtimeClasspath by configurations.creating {
     extendsFrom(compileClasspath)
 }
 
+dependencies {
+    forEachLibrary {
+        compileClasspath(files(it))
+    }
+    runtimeClasspath(files("$buildDir/bin"))
+}
 
 tasks.register<Exec>("runJava") {
     val classpathFiles = runtimeClasspath.resolve()
-    val mainClass = "PrintException"
+    val mainClass = "HelloWorld"
     val javaExecutable = Jvm.current().javaExecutable.absolutePath
+    val separator = if (System.getProperty("os.name").startsWith("Windows")) ";" else ":"
     commandLine(javaExecutable, "-cp", classpathFiles.joinToString(separator = separator), mainClass)
+
     dependsOn(compileJava)
 }
